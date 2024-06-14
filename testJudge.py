@@ -76,3 +76,42 @@ class Judge():
 				cnt *= j
 		self.freeCores.put(core)
     	# change verdict only when it was on early tests
+
+if __name__ == '__main__':
+	j = Judge(4, 0)
+	sub1 = dict()
+	sub1['numberOfTests'] = 10
+	sub1['id'] = 1
+	sub1['code'] = "#include<bits/stdc++.h>\n\
+	using namespace std;\
+	int dp[10003], p[10003], c[10003], d[10003];\
+	int main()\
+	{\
+	int n, T;\
+	cin >> n >> T;\
+	for(int i = 0; i < n; i++)\
+	    cin >> d[i];\
+	for(int i = 0; i < n; i++)\
+	    cin >> c[i];\
+	}"
+	sub2 = dict()
+	sub2['numberOfTests'] = 5
+	sub2['id'] = 2
+	sub2['code'] = "#include<bits/stdc++.h>\n\
+	using namespace std;\
+	int dp[10003], p[10003], c[10003], d[10003];\
+	int main()\
+	{\
+	int n, T;\
+	cin >> n >> T;\
+	for(int i = 0; i < n; i++)\
+	    cin >> d[i];\
+	for(int i = 0; i < n; i++)\
+	    cin >> c[i];\
+	}"
+	j.compile(sub1)
+	while len(j.compileSubmission) != 0:
+		pass
+	print('ok')
+	j.compile(sub2)
+	time.sleep(1000)
