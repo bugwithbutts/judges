@@ -6,7 +6,7 @@ import threading
 class JudgeMachine():
 
 	def __init__(self, coreSplit, judgeShift):
-		socket_path = './socket'
+		# socket_path = './socket'
 		self.port = 1024
 		self.client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 		self.client.connect(socket_path)
