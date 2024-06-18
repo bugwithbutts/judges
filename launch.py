@@ -1,4 +1,4 @@
 from JM import JudgeMachine
 
-coreSplit = [4]
+coreSplit = [2]
 JudgeMachine(coreSplit = coreSplit, judgeShift = 0)
