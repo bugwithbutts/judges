@@ -3,10 +3,11 @@ import json
 import socket
 import os
 import threading
+import time
 class JudgeMachine():
 
 	def __init__(self, coreSplit, judgeShift):
-		# socket_path = './socket'
+		socket_path = './socket4'
 		self.port = 1024
 		self.client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 		self.client.connect(socket_path)
@@ -25,8 +26,8 @@ class JudgeMachine():
 	def submissionHandler(self):
 		while True:
 			response = self.client.recv(self.port)
-			submission = json.loads(json.load(response.decode()))
-			self.newSubmission(submission, judge)
+			submission = json.loads(response.decode())
+			self.newSubmission(submission, 0)
 
 	def newSubmission(self, submission, judge):
 		self.judges[judge].compile(submission)
@@ -43,10 +44,11 @@ class JudgeMachine():
 					self.report(compileSubmission)
 				if len(compileSubmission) != 0:
 					self.report(testSubmission)
-				for sub in readySubmissions:
-					self.report(sub)
-				judge.readySubmissions.clear()
-			sleep(100)
+				n = len(readySubmissions)
+				for sub in range(n):
+				    self.report(readySubmissions[sub])
+				    readySubmissions.pop(0)
+			time.sleep(100) # Should do it periodical?
 
 	def report(self, submission):
 		res = dict()
