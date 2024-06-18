@@ -72,13 +72,13 @@ class Judge():
 		p.cpu_affinity([core * 2, core * 2 + 1])
 		for i in range(10):
 			cnt = 1
-			for j in range(10000000):
+			for j in range(50000000):
 				cnt *= j
 		self.freeCores.put(core)
     	# change verdict only when it was on early tests
 
 if __name__ == '__main__':
-	j = Judge(4, 0)
+	j = Judge(3, 0)
 	sub1 = dict()
 	sub1['numberOfTests'] = 10
 	sub1['id'] = 1
