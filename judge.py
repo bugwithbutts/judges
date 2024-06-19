@@ -13,35 +13,42 @@ class Judge():
 		self.readySubmissions = Manager().list()
 		self.numberOfJudges = numberOfJudges - 1
 		self.cpuShift = cpuShift
+		self.lock = Lock()
 
 	def compile(self, submission):
-		for i, j in submission.items():
-			self.compileSubmission[i] = j
+		with self.lock:
+			for i, j in submission.items():
+				self.compileSubmission[i] = j
 		process = Process(target=self.compileOnCore)
 		process.start()
 
 	def compileOnCore(self):
 		p = psutil.Process()
 		p.cpu_affinity([self.numberOfJudges * 2, self.numberOfJudges * 2 + 1])
-		self.compileSubmission['verdict'] = "C"
-		# check compiler
-		submission_id = self.compileSubmission['id']
+		with self.lock:
+			self.compileSubmission['verdict'] = "C"
+			# check compiler
+			submission_id = self.compileSubmission['id']
 		f = open(f'{submission_id}.cpp', 'w') # Where?
 		f.write(self.compileSubmission['code'])
 		f.close()
 		print("almost compiled")
 		ret = os.system(f'g++ -O3 -o {submission_id}.exe {submission_id}.cpp')
 		ret = 0
-		self.compileSubmission['exe'] = f'{submission_id}.exe'
+		with self.lock:
+			self.compileSubmission['exe'] = f'{submission_id}.exe'
 		if ret != 0:
 			self.compileSubmission['verdict'] = "CE"
 			return
 		while len(self.testSubmission) != 0:
 			pass
 		print("compiled")
-		for i, j in self.compileSubmission.items():
-			self.testSubmission[i] = j
-		self.compileSubmission.clear()
+		with self.lock:
+			for i, j in self.compileSubmission.items():
+				self.testSubmission[i] = j
+		print(self.testSubmission)
+		with self.lock:
+			self.compileSubmission.clear()
 		testingThread = Process(target=self.test)
 		testingThread.start()
 		testingThread.join()
@@ -54,7 +61,8 @@ class Judge():
 		self.freeCores = Manager().Queue()
 		for core in range(self.cpuShift, self.cpuShift + self.numberOfJudges):
 			self.freeCores.put(core)
-		for i in range(self.testSubmission['numberOfTests']):
+		print(self.testSubmission)
+		for i in range(int(self.testSubmission['numberOfTests'])):
 			# print(i)
 			self.testSubmission['test'] = i
 			if self.testSubmission['verdict'] != 'T':
@@ -64,7 +72,8 @@ class Judge():
 		while self.freeCores.qsize() != self.numberOfJudges:
 			pass
 		self.readySubmissions.append(self.testSubmission)
-		self.testSubmission.clear()
+		with self.lock:
+			self.testSubmission.clear()
 		print('all')
 		
 	def testOnCore(self, core, submission, test):

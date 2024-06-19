@@ -4,6 +4,7 @@ import socket
 import os
 import threading
 import time
+from sock import send, recv
 class JudgeMachine():
 
 	def __init__(self, coreSplit, judgeShift):
@@ -25,33 +26,35 @@ class JudgeMachine():
 
 	def submissionHandler(self):
 		while True:
-			response = self.client.recv(self.port)
-			submission = json.loads(response.decode())
+			submission = json.loads(recv(self.client))
 			self.newSubmission(submission, 0)
 
 	def newSubmission(self, submission, judge):
-		self.judges[judge].compile(submission)
+		if len(self.judges[judge].compileSubmission) == 0:
+			self.judges[judge].compile(submission)
 
 	def reportSubmission(self):
 		while True:
 			for num, judge in enumerate(self.judges, 0): 
-				testSubmission = judge.testSubmission
-				compileSubmission = judge.compileSubmission
-				readySubmissions = judge.readySubmissions
-				if len(compileSubmission) == 0:
-					self.reportNew(num)
-				else:
-					self.report(compileSubmission)
-				if len(compileSubmission) != 0:
-					self.report(testSubmission)
+				with judge.lock:
+					testSubmission = judge.testSubmission
+					compileSubmission = judge.compileSubmission
+					readySubmissions = judge.readySubmissions
+					if len(compileSubmission) == 0:
+						self.reportNew(num)
+					else:
+						self.report(compileSubmission)
+					if len(testSubmission) != 0:
+						self.report(testSubmission)
 				n = len(readySubmissions)
 				for sub in range(n):
 				    self.report(readySubmissions[sub])
 				    readySubmissions.pop(0)
-			time.sleep(100) # Should do it periodical?
+			time.sleep(1) # Should do it periodical?
 
 	def report(self, submission):
 		res = dict()
+		return
 		res['type'] = "submission"
 		res['verdict'] = submission['verdict']
 		res['id'] = submission['id']
@@ -60,12 +63,12 @@ class JudgeMachine():
 		res['maxTL'] = submission['maxTL']
 		res['maxML'] = submission['maxML']
 		res['IOI'] = submission['IOI']
-		self.client.sendall(json.dumps(res).encode())
+		send(json.dumps(res), self.client)
 		
 	def reportNew(self, judge):
 		res = dict()
 		res['type'] = "judge"
 		res['judge'] = judge + self.judgeShift
-		self.client.sendall(json.dumps(res).encode())
+		send(json.dumps(res), self.client)
 
 
