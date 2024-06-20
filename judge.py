@@ -5,6 +5,8 @@ import os
 import psutil
 import multiprocessing
 import time
+
+# Judge manages compilation and testing on multiple cores
 class Judge():
 
 	def __init__(self, numberOfJudges, cpuShift):
@@ -119,7 +121,7 @@ class Judge():
 		# Setting testing core
 		p = psutil.Process()
 		p.cpu_affinity([core])
-		
+
 		for i in range(10):
 			cnt = 1
 			for j in range(10000000):
