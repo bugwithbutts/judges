@@ -17,6 +17,7 @@ client, addr = s.accept()
 sub1 = dict()
 sub1['numberOfTests'] = 10
 sub1['id'] = 1
+sub1['judge'] = 0
 sub1['verdict'] = 'NONE'
 sub1['test'] = 0
 sub1['maxTL'] = 'NONE'
@@ -56,11 +57,20 @@ for(int i = 0; i < n; i++)\
 for(int i = 0; i < n; i++)\
     cin >> c[i];\
 }"
-while json.loads(recv(client))['type'] != "judge":
-	pass
+tmp = json.loads(recv(client))
+while tmp['type'] != "judge":
+    print(tmp)
+    tmp = json.loads(recv(client))
+print(tmp)
+sub1['judge'] = tmp['judge']
 send(json.dumps(sub1), client)
-while json.loads(recv(client))['type'] != "judge":
-	pass
+
+tmp = json.loads(recv(client))
+while tmp['type'] != "judge":
+    print(tmp)
+	tmp = json.loads(recv(client))
+print(tmp)
+sub2['judge'] = tmp['judge']
 send(json.dumps(sub2), client)
 while True:
 	pass

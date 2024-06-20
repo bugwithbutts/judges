@@ -24,7 +24,7 @@ class Judge():
 
 	def compileOnCore(self):
 		p = psutil.Process()
-		p.cpu_affinity([self.numberOfJudges * 2, self.numberOfJudges * 2 + 1])
+		p.cpu_affinity([self.numberOfJudges])
 		with self.lock:
 			self.compileSubmission['verdict'] = "C"
 			# check compiler
@@ -63,7 +63,6 @@ class Judge():
 			self.freeCores.put(core)
 		print(self.testSubmission)
 		for i in range(int(self.testSubmission['numberOfTests'])):
-			# print(i)
 			self.testSubmission['test'] = i
 			if self.testSubmission['verdict'] != 'T':
 				break
@@ -78,7 +77,7 @@ class Judge():
 		
 	def testOnCore(self, core, submission, test):
 		p = psutil.Process()
-		p.cpu_affinity([core * 2, core * 2 + 1])
+		p.cpu_affinity([core])
 		for i in range(10):
 			cnt = 1
 			for j in range(10000000):

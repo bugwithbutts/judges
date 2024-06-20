@@ -27,7 +27,7 @@ class JudgeMachine():
 	def submissionHandler(self):
 		while True:
 			submission = json.loads(recv(self.client))
-			self.newSubmission(submission, 0)
+			self.newSubmission(submission, submission['judge'] - self.judgeShift)
 
 	def newSubmission(self, submission, judge):
 		if len(self.judges[judge].compileSubmission) == 0:
@@ -54,7 +54,6 @@ class JudgeMachine():
 
 	def report(self, submission):
 		res = dict()
-		return
 		res['type'] = "submission"
 		res['verdict'] = submission['verdict']
 		res['id'] = submission['id']
