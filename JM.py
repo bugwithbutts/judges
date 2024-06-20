@@ -48,12 +48,13 @@ class JudgeMachine():
 						self.report(testSubmission)
 				n = len(readySubmissions)
 				for sub in range(n):
-				    self.report(readySubmissions[sub])
+				    self.report(readySubmissions[0])
 				    readySubmissions.pop(0)
 			time.sleep(1) # Should do it periodical?
 
 	def report(self, submission):
 		res = dict()
+		#print(submission)
 		res['type'] = "submission"
 		res['verdict'] = submission['verdict']
 		res['id'] = submission['id']

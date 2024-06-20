@@ -24,22 +24,23 @@ class Judge():
 
 	def compileOnCore(self):
 		p = psutil.Process()
-		p.cpu_affinity([self.numberOfJudges])
+		p.cpu_affinity([self.cpuShift + self.numberOfJudges])
 		with self.lock:
 			self.compileSubmission['verdict'] = "C"
 			# check compiler
 			submission_id = self.compileSubmission['id']
-		f = open(f'{submission_id}.cpp', 'w') # Where?
-		f.write(self.compileSubmission['code'])
-		f.close()
+		if self.compileSubmission['compiler'] == "g++":
+			f = open(f'{submission_id}.cpp', 'w') # Where?
+			f.write(self.compileSubmission['code'])
+			f.close()
+			ret = os.system(f'g++ -O3 -o {submission_id}.exe {submission_id}.cpp')
+			ret = 0
+			with self.lock:
+				self.compileSubmission['exe'] = f'{submission_id}.exe'
+			if ret != 0:
+				self.compileSubmission['verdict'] = "CE"
+				return
 		print("almost compiled")
-		ret = os.system(f'g++ -O3 -o {submission_id}.exe {submission_id}.cpp')
-		ret = 0
-		with self.lock:
-			self.compileSubmission['exe'] = f'{submission_id}.exe'
-		if ret != 0:
-			self.compileSubmission['verdict'] = "CE"
-			return
 		while len(self.testSubmission) != 0:
 			pass
 		print("compiled")
@@ -70,8 +71,10 @@ class Judge():
 			p.start()
 		while self.freeCores.qsize() != self.numberOfJudges:
 			pass
-		self.readySubmissions.append(self.testSubmission)
+		if self.testSubmission['verdict'] == 'T':
+			self.testSubmission['verdict'] = 'OK'
 		with self.lock:
+			self.readySubmissions.append(dict(self.testSubmission))
 			self.testSubmission.clear()
 		print('all')
 		

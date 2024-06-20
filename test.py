@@ -20,6 +20,7 @@ sub1['id'] = 1
 sub1['judge'] = 0
 sub1['verdict'] = 'NONE'
 sub1['test'] = 0
+sub1['compiler'] = "g++"
 sub1['maxTL'] = 'NONE'
 sub1['maxML'] = 'NONE'
 sub1['IOI'] = 'NONE'
@@ -43,6 +44,7 @@ sub2['verdict'] = 'NONE'
 sub2['checkerResult'] = 'NONE'
 sub2['test'] = 0
 sub2['maxTL'] = 'NONE'
+sub2['compiler'] = "g++"
 sub2['maxML'] = 'NONE'
 sub2['IOI'] = 'NONE'
 sub2['code'] = "#include<bits/stdc++.h>\n\
@@ -59,19 +61,20 @@ for(int i = 0; i < n; i++)\
 }"
 tmp = json.loads(recv(client))
 while tmp['type'] != "judge":
-    print(tmp)
-    tmp = json.loads(recv(client))
+	print(tmp)
+	tmp = json.loads(recv(client))
 print(tmp)
 sub1['judge'] = tmp['judge']
 send(json.dumps(sub1), client)
 
 tmp = json.loads(recv(client))
 while tmp['type'] != "judge":
-    print(tmp)
+	print(tmp)
 	tmp = json.loads(recv(client))
 print(tmp)
 sub2['judge'] = tmp['judge']
 send(json.dumps(sub2), client)
 while True:
-	pass
+	tmp = json.loads(recv(client))
+	print(tmp)
 client.close()
