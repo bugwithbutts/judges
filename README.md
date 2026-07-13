@@ -3,3 +3,4 @@ Task routing for competitive programming testing system.
 * For core settings use coreSplit in launch.py code
 * Note that number of cores includes compile core for each judge
 * Logical CPU's are used as cores in the current version
+More information in "diplom.pdf".
