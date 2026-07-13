@@ -4,4 +4,4 @@ Task routing for competitive programming testing system.
 * Note that number of cores includes compile core for each judge
 * Logical CPU's are used as cores in the current version
 
-More information in "diplom.pdf".
+More information in "diplom.pdf". 
